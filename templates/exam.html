@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+{% block title %}Exam - CBT Mock Exam{% endblock %}
+{% block extra_css %}
+<style>
+body { overflow-x: hidden; }
+main { display: block; }
+.navbar { position: sticky; top: 0; z-index: 100; }
+</style>
+{% endblock %}
+{% block content %}
+
+<!-- Tab Switch Warning Modal -->
+<div class="modal-overlay" id="tabModal">
+  <div class="modal-box">
+    <div class="modal-icon">⚠️</div>
+    <div class="modal-title">Tab Switch Detected!</div>
+    <div class="modal-msg" id="tabModalMsg">You have switched tabs. This is exam violation. <strong id="switchCount">0</strong> of 3 allowed.</div>
+    <div class="modal-btns">
+      <button class="btn btn-primary" onclick="closeTabModal()">Continue Exam</button>
+    </div>
+  </div>
+</div>
+
+<!-- Submit Confirm Modal -->
+<div class="modal-overlay" id="submitModal">
+  <div class="modal-box">
+    <div class="modal-icon">📋</div>
+    <div class="modal-title">Submit Exam?</div>
+    <div class="modal-msg" id="submitMsg">Are you sure you want to submit? Unanswered questions will be marked wrong.</div>
+    <div class="modal-btns">
+      <button class="btn btn-outline" onclick="closeSubmitModal()">Cancel</button>
+      <button class="btn btn-success" id="confirmSubmitBtn" onclick="finalSubmit()">✅ Yes, Submit (Y)</button>
+    </div>
+  </div>
+</div>
+
+<!-- Auto-submit Modal -->
+<div class="modal-overlay" id="autoModal">
+  <div class="modal-box">
+    <div class="modal-icon">⏰</div>
+    <div class="modal-title" id="autoModalTitle">Time's Up!</div>
+    <div class="modal-msg" id="autoModalMsg">Your exam is being submitted automatically.</div>
+    <div class="modal-btns">
+      <button class="btn btn-primary" id="autoModalBtn" onclick="finalSubmit()">Submit Now</button>
+    </div>
+  </div>
+</div>
+
+<div class="exam-layout">
+  <!-- Main Exam Area -->
+  <div class="exam-main">
+    <!-- Exam Header -->
+    <div class="exam-header">
+      <div>
+        <div class="exam-title">ONLINE CBT MOCK EXAM</div>
+        <div style="font-size:.78rem;opacity:.7;">{{ user_name }} &nbsp;|&nbsp; {{ session['reg_no'] }}</div>
+      </div>
+      <div class="timer" id="timer">03:00:00</div>
+      <button class="btn btn-danger" onclick="showSubmitModal()">🏁 Submit Exam</button>
+    </div>
+
+    <!-- Subject Tabs -->
+    <div class="subject-tabs" id="subjectTabs">
+      {% for sub in subs %}
+      <div class="sub-tab {% if loop.first %}active{% endif %}" data-subject="{{ sub }}" onclick="switchSubject('{{ sub }}')">
+        {{ sub }} <span id="tab-count-{{ sub }}" style="font-size:.75rem;opacity:.7;"></span>
+      </div>
+      {% endfor %}
+    </div>
+
+    <!-- Question Area -->
+    <div class="question-area" id="questionArea">
+      <div class="question-num" id="questionNum">Question 1 of 180</div>
+      <div class="question-text" id="questionText">Loading question...</div>
+      <div class="options-list" id="optionsList"></div>
+    </div>
+
+    <!-- Navigation -->
+    <div class="exam-nav">
+      <button class="btn btn-outline" id="prevBtn" onclick="navigate(-1)">← Previous (P)</button>
+      <div style="text-align:center;">
+        <div style="font-size:.82rem;color:var(--gray-400);">Q <span id="currentQNum">1</span> / 180</div>
+        <div class="shortcut-help">
+          <code>A</code><code>B</code><code>C</code><code>D</code> select &nbsp;
+          <code>N</code> next &nbsp; <code>P</code> prev &nbsp; <code>S</code> submit
+        </div>
+      </div>
+      <button class="btn btn-primary" id="nextBtn" onclick="navigate(1)">Next → (N)</button>
+    </div>
+  </div>
+
+  <!-- Sidebar -->
+  <div class="exam-sidebar">
+    <div class="palette-title">📊 Question Palette</div>
+    <div class="palette-legend">
+      <div class="legend-item"><div class="legend-dot" style="background:var(--green);"></div> Answered</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--red);"></div> Unanswered</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--yellow);border:2px solid var(--blue-dark);"></div> Current</div>
+    </div>
+    <div class="palette-grid" id="palette"></div>
+    <div style="border-top:1px solid var(--gray-200);padding-top:14px;margin-top:6px;">
+      <div style="font-size:.8rem;font-weight:700;color:var(--gray-600);margin-bottom:8px;">PROGRESS</div>
+      <div style="display:flex;justify-content:space-between;font-size:.82rem;margin-bottom:6px;">
+        <span>Answered</span><strong id="answeredCount" style="color:var(--green);">0</strong>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:.82rem;margin-bottom:12px;">
+        <span>Unanswered</span><strong id="unansweredCount" style="color:var(--red);">180</strong>
+      </div>
+      <div style="background:var(--gray-200);border-radius:4px;height:6px;overflow:hidden;">
+        <div id="progressBar" style="background:var(--green);height:100%;width:0%;transition:width .3s;"></div>
+      </div>
+    </div>
+    <button class="btn btn-danger w-full mt-4" style="justify-content:center;" onclick="showSubmitModal()">🏁 Submit Exam</button>
+  </div>
+</div>
+
+<!-- Store questions data -->
+<script>
+const QUESTIONS = {{ questions | tojson }};
+const SUBS = {{ subs | tojson }};
+const STORAGE_KEY = 'cbt_answers_{{ session["reg_no"] }}';
+const TIMER_KEY   = 'cbt_timer_{{ session["reg_no"] }}';
+</script>
+<script src="{{ url_for('static', filename='js/exam.js') }}"></script>
+{% endblock %}

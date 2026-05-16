@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}Candidate Login - CBT Mock Exam{% endblock %}
+{% block content %}
+<div class="login-card">
+  <div style="text-align:center;margin-bottom:28px;">
+    <div style="font-size:3rem;">🔐</div>
+    <h2 class="page-title" style="text-align:center;margin-top:8px;">Candidate Login</h2>
+    <p style="color:var(--gray-600);font-size:.9rem;">Enter your Registration Number and Login Code to begin your exam.</p>
+  </div>
+  <div class="card">
+    <div class="card-body">
+      <form method="POST">
+        <div class="form-group">
+          <label>Registration Number</label>
+          <input class="form-control" type="text" name="reg_no" required
+            placeholder="e.g. CANDMOCKAB1234" style="text-transform:uppercase;letter-spacing:2px;font-weight:700;">
+        </div>
+        <div class="form-group">
+          <label>Login Code</label>
+          <input class="form-control" type="text" name="login_code" required
+            placeholder="6-character code from admin" style="text-transform:uppercase;letter-spacing:3px;font-weight:700;">
+        </div>
+        <button class="btn btn-primary w-full btn-lg" style="justify-content:center;margin-top:8px;" type="submit">
+          🚀 Start Exam
+        </button>
+      </form>
+    </div>
+  </div>
+  <div class="card mt-4" style="background:var(--blue-pale);border:2px solid var(--blue-mid);">
+    <div class="card-body" style="padding:16px;">
+      <p style="font-size:.85rem;color:var(--blue-dark);font-weight:600;">
+        ℹ️ Don't have a login code? Contact admin on WhatsApp after payment verification.
+      </p>
+      <a href="https://wa.me/2348136818190" target="_blank" class="btn btn-sm mt-4" style="background:#25D366;color:#fff;">
+        💬 WhatsApp Admin
+      </a>
+    </div>
+  </div>
+  <div class="text-center mt-4">
+    <a href="{{ url_for('register') }}" style="color:var(--blue-mid);font-weight:600;font-size:.9rem;">Not registered? Register here →</a>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+// Auto-uppercase
+document.querySelectorAll('input[name=reg_no], input[name=login_code]').forEach(el => {
+  el.addEventListener('input', () => el.value = el.value.toUpperCase());
+});
+</script>
+{% endblock %}

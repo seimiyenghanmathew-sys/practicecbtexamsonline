@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block title %}Review Answers - CBT Mock Exam{% endblock %}
+{% block content %}
+<div class="review-container">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px;">
+    <div>
+      <h1 class="page-title">📖 Answer Review</h1>
+      <p style="color:var(--gray-600);">{{ name }} — Detailed answer review</p>
+    </div>
+    <div style="display:flex;gap:10px;">
+      <a href="{{ url_for('result') }}" class="btn btn-outline">← Back to Result</a>
+    </div>
+  </div>
+
+  <!-- Summary Bar -->
+  <div style="display:flex;gap:12px;margin-bottom:24px;flex-wrap:wrap;">
+    <div style="background:#d4edda;border:2px solid var(--green);border-radius:8px;padding:12px 20px;font-weight:700;color:#155724;">
+      ✅ Correct: {{ review_data | selectattr('is_correct') | list | length }}
+    </div>
+    <div style="background:#f8d7da;border:2px solid var(--red);border-radius:8px;padding:12px 20px;font-weight:700;color:#721c24;">
+      ❌ Wrong: {{ review_data | rejectattr('is_correct') | list | length }}
+    </div>
+    <div style="background:var(--blue-pale);border:2px solid var(--blue-mid);border-radius:8px;padding:12px 20px;font-weight:700;color:var(--blue-dark);">
+      📊 Total: {{ review_data | length }}
+    </div>
+  </div>
+
+  {% set current_subject = namespace(val='') %}
+  {% for item in review_data %}
+    {% if item.subject != current_subject.val %}
+      {% set current_subject.val = item.subject %}
+      <div style="background:var(--blue-dark);color:#fff;padding:10px 20px;border-radius:8px;margin:20px 0 12px;font-family:'Nunito',sans-serif;font-weight:800;">
+        📚 {{ item.subject }}
+      </div>
+    {% endif %}
+
+    <div class="review-item {% if item.is_correct %}correct-item{% else %}wrong-item{% endif %}">
+      <div class="review-q-num">
+        Question {{ loop.index }} — {{ item.subject }}
+        &nbsp;
+        {% if item.is_correct %}
+          <span style="color:var(--green);font-weight:800;">✅ CORRECT</span>
+        {% else %}
+          <span style="color:var(--red);font-weight:800;">❌ WRONG</span>
+        {% endif %}
+      </div>
+      <div class="review-q-text">{{ item.question }}</div>
+      <div class="review-options">
+        {% for letter in ['A', 'B', 'C', 'D'] %}
+          <div class="review-opt
+            {% if letter == item.correct %}correct-opt
+            {% elif letter == item.user_answer and letter != item.correct %}wrong-opt
+            {% endif %}">
+            <strong>{{ letter }}.</strong> {{ item[letter] }}
+            {% if letter == item.correct %} ✅{% endif %}
+            {% if letter == item.user_answer and letter != item.correct %} ← Your Answer{% endif %}
+            {% if letter == item.user_answer and letter == item.correct %} ← Your Answer{% endif %}
+          </div>
+        {% endfor %}
+      </div>
+      {% if not item.user_answer %}
+        <div style="margin-top:10px;font-size:.82rem;color:var(--gray-400);font-style:italic;">— Not answered</div>
+      {% endif %}
+    </div>
+  {% else %}
+    <div style="text-align:center;color:var(--gray-400);padding:60px;">No review data available.</div>
+  {% endfor %}
+
+  <div style="text-align:center;margin-top:32px;">
+    <a href="{{ url_for('result') }}" class="btn btn-primary btn-lg">← Back to Result</a>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+{% block title %}Register - CBT Mock Exam{% endblock %}
+{% block content %}
+<div class="page-container">
+  <div class="page-title">📝 Candidate Registration</div>
+  <p class="page-subtitle">Fill in your details and select your exam subjects below.</p>
+
+  <form method="POST" enctype="multipart/form-data">
+    <!-- Personal Info -->
+    <div class="card mb-6">
+      <div class="card-header">👤 Personal Information</div>
+      <div class="card-body">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;">
+          <div class="form-group">
+            <label>Full Name *</label>
+            <input class="form-control" type="text" name="name" required placeholder="Enter your full name">
+          </div>
+          <div class="form-group">
+            <label>Age</label>
+            <input class="form-control" type="number" name="age" min="10" max="60" placeholder="Your age">
+          </div>
+          <div class="form-group">
+            <label>Email Address</label>
+            <input class="form-control" type="email" name="email" placeholder="your@email.com">
+          </div>
+          <div class="form-group">
+            <label>Phone Number *</label>
+            <input class="form-control" type="tel" name="phone" required placeholder="08012345678">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Payment Receipt (Upload screenshot/photo) *</label>
+          <input class="form-control" type="file" name="receipt" accept=".png,.jpg,.jpeg,.pdf,.gif" required>
+          <div style="font-size:.8rem;color:var(--gray-400);margin-top:4px;">Accepted: PNG, JPG, JPEG, PDF, GIF. Max 5MB.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Subject Selection -->
+    <div class="card mb-6">
+      <div class="card-header">📚 Subject Selection</div>
+      <div class="card-body">
+        <div style="background:var(--blue-pale);border:2px solid var(--blue-mid);border-radius:8px;padding:12px 16px;margin-bottom:18px;font-size:.9rem;font-weight:600;color:var(--blue-dark);">
+          📌 English is compulsory and pre-selected. You must select exactly <strong>3 additional subjects</strong>.
+        </div>
+        <div id="subject-error" style="display:none;background:#f8d7da;color:#721c24;border:2px solid var(--red);border-radius:8px;padding:12px 16px;margin-bottom:14px;font-weight:700;"></div>
+        <div id="subject-count" style="margin-bottom:14px;font-size:.9rem;font-weight:700;color:var(--gray-600);">
+          Subjects selected: <span id="cnt" style="color:var(--blue-mid);">0</span> / 3 additional
+        </div>
+        <div class="subjects-grid">
+          {% for subject in subjects %}
+          <label class="subject-check {% if subject == 'English' %}compulsory{% endif %}">
+            <input type="checkbox" name="subjects" value="{{ subject }}"
+              {% if subject == 'English' %}checked disabled{% endif %}
+              {% if subject != 'English' %}class="extra-sub"{% endif %}>
+            {{ subject }}
+          </label>
+          {% endfor %}
+        </div>
+        <!-- Hidden English field since disabled checkboxes don't submit -->
+        <input type="hidden" name="subjects" value="English">
+      </div>
+    </div>
+
+    <div class="warning-box mb-6">
+      <span class="warn-icon">⚠️</span>
+      <span>Ensure you have paid ₦2,000 to LEEVENTURE (PAGA: 0793025701) before submitting.</span>
+    </div>
+
+    <button type="submit" class="btn btn-primary btn-lg w-full" style="justify-content:center;" id="submit-btn">
+      ✅ Complete Registration
+    </button>
+  </form>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+const checkboxes = document.querySelectorAll('.extra-sub');
+const cntEl = document.getElementById('cnt');
+const errEl = document.getElementById('subject-error');
+const submitBtn = document.getElementById('submit-btn');
+
+function updateCount() {
+  const checked = document.querySelectorAll('.extra-sub:checked').length;
+  cntEl.textContent = checked;
+  cntEl.style.color = checked === 3 ? 'var(--green)' : 'var(--blue-mid)';
+}
+
+checkboxes.forEach(cb => {
+  cb.addEventListener('change', function() {
+    const checked = document.querySelectorAll('.extra-sub:checked').length;
+    if (checked > 3) { this.checked = false; return; }
+    updateCount();
+  });
+});
+
+document.querySelector('form').addEventListener('submit', function(e) {
+  const checked = document.querySelectorAll('.extra-sub:checked').length;
+  if (checked !== 3) {
+    e.preventDefault();
+    errEl.textContent = '❌ You must select exactly 3 subjects in addition to English (currently ' + checked + ' selected).';
+    errEl.style.display = 'block';
+    errEl.scrollIntoView({behavior:'smooth', block:'center'});
+  }
+});
+
+updateCount();
+</script>
+{% endblock %}

@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block title %}Your Result - CBT Mock Exam{% endblock %}
+{% block content %}
+<div class="result-card">
+  <div style="text-align:center;margin-bottom:8px;">
+    <h2 class="page-title" style="text-align:center;">🎓 Exam Result</h2>
+    <p style="color:var(--gray-600);">{{ name }}</p>
+  </div>
+
+  <div class="card">
+    <div class="card-body" style="text-align:center;padding:40px;">
+      <div class="score-circle">
+        <div class="score-num">{{ score | int }}</div>
+        <div class="score-of">out of 400</div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin:24px 0;">
+        <div style="text-align:center;">
+          <div style="font-size:1.4rem;font-weight:900;font-family:'Nunito',sans-serif;color:var(--blue-dark);">{{ score }}</div>
+          <div style="font-size:.78rem;color:var(--gray-400);font-weight:600;text-transform:uppercase;">JAMB Score</div>
+        </div>
+        {% if correct is not none %}
+        <div style="text-align:center;">
+          <div style="font-size:1.4rem;font-weight:900;font-family:'Nunito',sans-serif;color:var(--green);">{{ correct }}</div>
+          <div style="font-size:.78rem;color:var(--gray-400);font-weight:600;text-transform:uppercase;">Correct</div>
+        </div>
+        <div style="text-align:center;">
+          <div style="font-size:1.4rem;font-weight:900;font-family:'Nunito',sans-serif;color:var(--red);">{{ (total or 180) - (correct or 0) }}</div>
+          <div style="font-size:.78rem;color:var(--gray-400);font-weight:600;text-transform:uppercase;">Wrong</div>
+        </div>
+        {% endif %}
+      </div>
+
+      {% if score >= 250 %}
+        <div style="background:#d4edda;border:2px solid var(--green);border-radius:8px;padding:14px;color:#155724;font-weight:700;margin-bottom:20px;">
+          🌟 Excellent Performance! You are well prepared.
+        </div>
+      {% elif score >= 200 %}
+        <div style="background:#fff3cd;border:2px solid #ffc107;border-radius:8px;padding:14px;color:#856404;font-weight:700;margin-bottom:20px;">
+          👍 Good Performance! Keep studying to improve.
+        </div>
+      {% else %}
+        <div style="background:#f8d7da;border:2px solid var(--red);border-radius:8px;padding:14px;color:#721c24;font-weight:700;margin-bottom:20px;">
+          📚 Below Average. More practice needed.
+        </div>
+      {% endif %}
+
+      <div style="display:flex;gap:12px;flex-wrap:wrap;">
+        <a href="{{ url_for('review') }}" class="btn btn-primary btn-lg" style="flex:1;justify-content:center;">📖 Review Answers</a>
+        <a href="https://wa.me/2348136818190?text=Hello,%20I%20just%20completed%20my%20CBT%20exam.%20My%20score%20is%20{{ score | int }}%20out%20of%20400."
+           target="_blank" class="btn btn-lg" style="background:#25D366;color:#fff;flex:1;justify-content:center;">
+          💬 Share on WhatsApp
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div style="text-align:center;margin-top:20px;">
+    <a href="{{ url_for('index') }}" style="color:var(--gray-400);font-size:.85rem;">← Back to Home</a>
+  </div>
+</div>
+{% endblock %}

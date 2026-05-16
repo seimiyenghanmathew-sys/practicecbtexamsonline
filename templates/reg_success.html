@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}Registration Successful{% endblock %}
+{% block content %}
+<div class="success-box">
+  <div class="success-icon">🎉</div>
+  <h2 class="page-title" style="text-align:center;">Registration Successful!</h2>
+  <p style="color:var(--gray-600);margin:12px 0 8px;">Welcome, <strong>{{ name }}</strong>! Your registration number is:</p>
+  <div class="reg-no-display">{{ reg_no }}</div>
+  <div class="card mt-4">
+    <div class="card-body" style="text-align:left;">
+      <h3 style="font-family:'Nunito',sans-serif;font-weight:800;margin-bottom:12px;color:var(--blue-dark);">📋 Next Steps</h3>
+      <ol style="list-style:none;display:flex;flex-direction:column;gap:12px;">
+        <li style="display:flex;gap:10px;align-items:flex-start;">
+          <span class="step-num">1</span>
+          <span>Save your registration number: <strong style="color:var(--blue-mid);">{{ reg_no }}</strong></span>
+        </li>
+        <li style="display:flex;gap:10px;align-items:flex-start;">
+          <span class="step-num">2</span>
+          <span>Contact admin on WhatsApp with your registration number.</span>
+        </li>
+        <li style="display:flex;gap:10px;align-items:flex-start;">
+          <span class="step-num">3</span>
+          <span>Admin will verify your payment and send you a <strong>Login Code</strong> via WhatsApp.</span>
+        </li>
+        <li style="display:flex;gap:10px;align-items:flex-start;">
+          <span class="step-num">4</span>
+          <span>Use your Registration Number + Login Code to access the exam.</span>
+        </li>
+      </ol>
+    </div>
+  </div>
+  <div style="display:flex;gap:12px;margin-top:24px;flex-wrap:wrap;">
+    <a href="https://wa.me/2348136818190?text=Hello,%20my%20registration%20number%20is%20{{ reg_no }}%20please%20verify%20my%20payment."
+       target="_blank" class="btn btn-lg" style="background:#25D366;color:#fff;flex:1;justify-content:center;">
+      💬 Contact Admin on WhatsApp
+    </a>
+    <a href="{{ url_for('login') }}" class="btn btn-outline btn-lg" style="flex:1;justify-content:center;">🔐 Go to Login</a>
+  </div>
+</div>
+{% endblock %}
